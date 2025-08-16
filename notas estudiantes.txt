@@ -1,0 +1,12 @@
+//Coil
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
+//Launch galery
+    val launcher = rememberLauncherForActivityResult(
+        contract =
+        ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            action(it)
+        }
+    }

@@ -1,0 +1,11 @@
+package com.example.twitterfalso.ui.Screens.Home
+
+import androidx.core.app.NotificationCompat.MessagingStyle.Message
+import com.example.twitterfalso.data.TweetInfo
+
+data class HomeState(
+    val tweets: List<TweetInfo> = emptyList(),
+    val expanded: Boolean = false,
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null,
+)

@@ -1,0 +1,7 @@
+-Organizar el proyecto, screens, navigation
+-tener el register screen de manera adecuada
+-Creación pantalla de crear tweet
+-Usertweets
+Falta 
+
+

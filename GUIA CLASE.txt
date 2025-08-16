@@ -1,0 +1,76 @@
+0. MOSTRAR MODIFICACIONES INCIALES
+
+1. LIKE A UN TWEET
+
+Los datos que se usan en listados o vistas rápidas van en el documento principal (conteos, promedios, datos resumidos).
+Los datos que se usan bajo demanda (detalles, historiales, listas completas) van en subcolecciones.
+
+1.0 Explicar como generar una subcolección
+1.1 Modificar la interfaz
+1.2 Modificar el datasource
+1.3 agregar isLiked a TweetInfo
+1.4 Logica en la pantalla para mostrar o esconder
+1.5 metodo en el viewmodel
+1.6 llamar al metodo en la pantalla
+
+2.0 revisar si un usuario ya le dio like
+2.1 modificar la interfaz
+2.2 modificar el metodo getTweetById
+2.3 modificar el tweetDto y el map
+2.4 modificar en el repo
+2.5 modificar el viewmodel
+
+3.0 Follow 
+3.1 datasource
+3.2 repositorio
+3.3 en dto agregar followed y el info
+3.4 modificar la pantalla para mostrar un mesaje y otro
+3.5 hacer el viewmodel
+3.6 llamar el metodo
+
+4.0 Live data
+
+getAllTweets en HomeScreen
+        viewModelScope.launch {
+            tweetRepository.getTweetsLive()
+                .catch { e -> /* manejar error */ }
+                .collect { tweets ->
+                    _uiState.update { it.copy(tweets = tweets) }
+                }
+        }
+
+TweetRepository
+
+    fun getTweetsLive(): Flow<List<TweetInfo>> {
+        return tweetRemoteDataSource.listenAllTweets()
+            .map { list -> list.map { it.toTweetInfo() } }
+    }
+
+TweetRemoteDataSource 
+
+    //listenAllTweets
+    fun listenAllTweets(): Flow<List<TweetDto>>
+
+TweetFirestoreDataSourceImpl
+
+    override fun listenAllTweets(): Flow<List<TweetDto>> = callbackFlow {
+        val listenerRegistration = db.collection("tweets")
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    close(error) // cierra el flujo con error
+                    return@addSnapshotListener
+                }
+                if (snapshot != null) {
+                    val tweets = snapshot.documents.map { doc ->
+                        val tweet = doc.toObject(TweetDto::class.java)
+                        tweet?.copy(id = doc.id) ?: throw Exception("Tweet not found")
+                    }
+                    trySend(tweets).isSuccess // envía la lista al Flow
+                }
+            }
+
+        // Cuando el Flow se cancela, removemos el listener
+        awaitClose { listenerRegistration.remove() }
+    }
+
+5.0
