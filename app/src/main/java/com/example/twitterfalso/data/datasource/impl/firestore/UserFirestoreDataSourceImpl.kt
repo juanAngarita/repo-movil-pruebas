@@ -3,6 +3,7 @@ package com.example.twitterfalso.data.datasource.impl.firestore
 import com.example.twitterfalso.data.datasource.UserRemoteDataSource
 import com.example.twitterfalso.data.dtos.RegisterUserDto
 import com.example.twitterfalso.data.dtos.TweetDto
+import com.example.twitterfalso.data.dtos.UpdateUserDto
 import com.example.twitterfalso.data.dtos.UserDtoGeneric
 import com.example.twitterfalso.data.dtos.UserProfileFirestoreDto
 import com.google.firebase.firestore.FieldValue
@@ -12,10 +13,19 @@ import javax.inject.Inject
 
 class UserFirestoreDataSourceImpl @Inject constructor(private val db: FirebaseFirestore) : UserRemoteDataSource {
 
-    override suspend fun getUserById(id: String): UserProfileFirestoreDto {
+    override suspend fun getUserById(id: String, currentUserId: String): UserProfileFirestoreDto {
         val docRef = db.collection("users").document(id)
         val respuesta = docRef.get().await()
-        return respuesta.toObject(UserProfileFirestoreDto::class.java) ?: throw Exception("No se pudo obtener el usuario")
+        val user =  respuesta.toObject(UserProfileFirestoreDto::class.java) ?: throw Exception("No se pudo obtener el usuario")
+
+        if(currentUserId.isNotEmpty()){
+            val followerDoc = db.collection("users").document(id).collection("followers").document(currentUserId).get().await()
+            val exist = followerDoc.exists()
+            user.followed = exist
+        }
+
+
+        return user
     }
 
     override suspend fun getUserTweets(id: String): List<TweetDto> {
@@ -35,6 +45,8 @@ class UserFirestoreDataSourceImpl @Inject constructor(private val db: FirebaseFi
         val docRef = db.collection("users").document(userId)
         docRef.update("profileImage", photoUrl).await()
     }
+
+
 
     override suspend fun followOrUnfollow(currentUserId: String, targetUserId: String) {
         val currentUserRef = db.collection("users").document(currentUserId)
@@ -60,5 +72,24 @@ class UserFirestoreDataSourceImpl @Inject constructor(private val db: FirebaseFi
                 transaction.update(targetUserRef, "followersCount", FieldValue.increment(1))
             }
         }
+    }
+
+    override suspend fun updateUserProfile(
+        userId: String,
+        userProfileInfo: UpdateUserDto
+    ) {
+        val docRef = db.collection("users").document(userId)
+        docRef.update(
+            mapOf(
+                "name" to userProfileInfo.name,
+                "bio" to userProfileInfo.bio,
+                "location" to userProfileInfo.pais
+            )
+        ).await()
+    }
+
+    override suspend fun updateUserBackgroundImage(userId: String, photoUrl: String) {
+        val docRef = db.collection("users").document(userId)
+        docRef.update("coverImage", photoUrl).await()
     }
 }

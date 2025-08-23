@@ -14,4 +14,19 @@ data class UserProfileInfo(
     val accountCreationDate: String,
     val id: String,
     val followed: Boolean = false
-)
+){
+    constructor() : this (
+        backgroundImage = null,
+        profileImage = null,
+        name = "",
+        username = "",
+        bio = "",
+        followers = 0,
+        following = 0,
+        location = "",
+        website = "",
+        birthDate = "",
+        accountCreationDate = "",
+        id = "",
+    )
+}

@@ -1,7 +1,11 @@
 package com.example.twitterfalso.ui.functions
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 
 object Utils {
 
@@ -17,8 +21,28 @@ object Utils {
         return photoUrl
     }
 
+    fun getCurrentUserName(): String{
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        val photoUrl: String = currentUser?.displayName ?: ""
+        return photoUrl
+    }
+
+    fun getCurrentUserEmail(): String{
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        val photoUrl: String = currentUser?.email ?: ""
+        return photoUrl
+    }
+
+    fun getCurrentUser(): FirebaseUser? {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        return currentUser
+    }
+
+    @Composable
     fun getCurrentRoute(navController: NavHostController): String {
-        return navController.currentBackStackEntry?.destination?.route ?: ""
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = navBackStackEntry?.destination?.route ?: ""
+        return currentRoute
     }
 
 }

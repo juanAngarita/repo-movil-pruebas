@@ -17,7 +17,6 @@ class TweetFirestoreDataSourceImpl @Inject constructor(
 ) : TweetRemoteDataSource {
     override suspend fun getAllTweets(): List<TweetDto> {
        val snapshot =  db.collection("tweets").get().await()
-
         return snapshot.documents.map { doc ->
             val tweet = doc.toObject(TweetDto::class.java)
             tweet?.copy(id = doc.id) ?: throw Exception("Tweet not found")

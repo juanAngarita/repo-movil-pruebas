@@ -6,15 +6,13 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
+import androidx.core.net.toUri
+import com.example.twitterfalso.ui.functions.Utils
 
 //Datasource: Firebase Auth
 class AuthRemoteDataSource @Inject constructor (
     private val auth: FirebaseAuth
 ){
-
-    //Permite obtener el usuario actual
-    val currentUser: FirebaseUser?
-        get() = auth.currentUser
 
     // Permite realizar Sign in con usuario y contraseña
     suspend fun signIn(email: String, password: String): Unit {
@@ -36,8 +34,8 @@ class AuthRemoteDataSource @Inject constructor (
     //Recibe la url de la imagen
     //Se debe llamar despues de subir la funcion a firebase
     suspend fun updateProfileImage(photoUrl: String): Unit {
-        val uri = Uri.parse(photoUrl)
-        currentUser?.updateProfile(
+        val uri = photoUrl.toUri()
+        Utils.getCurrentUser()?.updateProfile(
             UserProfileChangeRequest.Builder()
                 .setPhotoUri(uri)
                 .build()

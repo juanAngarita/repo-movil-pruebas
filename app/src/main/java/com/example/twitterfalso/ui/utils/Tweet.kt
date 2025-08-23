@@ -46,7 +46,7 @@ fun  Tweet(
     onDeleteClicked: () -> Unit = {},
 ){
     Column(
-        modifier = modifier.padding(12.dp)
+        modifier = modifier.padding(12.dp),
     ) {
         TweetCardHeader(
             name = tweetInfo.name,

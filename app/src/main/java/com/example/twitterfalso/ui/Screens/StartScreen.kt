@@ -21,56 +21,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.twitterfalso.R
+import com.example.twitterfalso.ui.theme.TwitterFalsoTheme
 import com.example.twitterfalso.ui.utils.AppButton
 import com.example.twitterfalso.ui.utils.BackgroundImage
 import com.example.twitterfalso.ui.utils.LogoApp
 
-//1. Todo Composable recibe como parametro opcional un modifier
-//2. el componente de primer nivel usa como modificador el modifier que viene como parametro
-//3. El componente padre gana la habilidad de modificar sus hijos
-//Los componentes que no son de primer nivel usan Modifier
-
-//sp vs dp
 @Composable
 fun MensajeBienvenida(
     nombre: String,
     modifier: Modifier = Modifier
 ) {
     Text(
-        stringResource(R.string.bienvenido_a) + " ${nombre}",
+        stringResource(R.string.bienvenido_a) + " $nombre",
         fontSize = 24.sp,
         fontWeight = FontWeight.Bold,
         color = colorResource(R.color.blue_twitter),
         modifier = modifier
     )
-}
-
-@Composable
-@Preview(showBackground = true)
-fun MensajeBienvenidaPreview() {
-    MensajeBienvenida(stringResource(R.string.app_name))
-}
-
-/*@Composable
-@Preview(showBackground = true)
-fun MensajeBienvenidaPreview2() {
-    MensajeBienvenida("Facebook")
-}*/
-
-
-@Composable
-@Preview(showBackground = true)
-fun LogoAppPreview() {
-    LogoApp()
-}
-
-
-
-@Composable
-@Preview(showBackground = true)
-fun AppButtonPreview() {
-    AppButton(stringResource(R.string.iniciar_sesion),
-        onClick = {})
 }
 
 @Composable
@@ -172,11 +139,27 @@ fun StartScreen(
 
 }
 
+
+@Composable
+@Preview(showBackground = true)
+fun MensajeBienvenidaPreview() {
+    MensajeBienvenida(stringResource(R.string.app_name))
+}
+
+@Composable
+@Preview(showBackground = true)
+fun LogoAppPreview() {
+    LogoApp()
+}
+
+
 @Composable
 @Preview(showBackground = true)
 fun HomeScreenPreview() {
-    StartScreen(
-        loginButtonPressed = {},
-        registerButtonPressed = {}
-    )
+    TwitterFalsoTheme {
+        StartScreen(
+            loginButtonPressed = {},
+            registerButtonPressed = {}
+        )
+    }
 }

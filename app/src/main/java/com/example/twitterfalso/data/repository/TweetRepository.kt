@@ -10,6 +10,7 @@ import com.example.twitterfalso.data.datasource.impl.retrofit.TweetRetrofitDataS
 import com.example.twitterfalso.data.dtos.CreateTweetDto
 import com.example.twitterfalso.data.dtos.CreateTweetUserDto
 import com.example.twitterfalso.data.dtos.toTweetInfo
+import com.example.twitterfalso.ui.functions.Utils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -38,7 +39,7 @@ class TweetRepository @Inject constructor(
         return try {
 
             val user = userRemoteDataSource.getUserById(userId)
-            val photoUrl = authRemoteDataSource.currentUser?.photoUrl?.toString()
+            val photoUrl = Utils.getCurrentUserPhoto()
 
             val createTweetUserDto = CreateTweetUserDto(
                 name = user.name,
@@ -105,6 +106,13 @@ class TweetRepository @Inject constructor(
             .map { list -> list.map { it.toTweetInfo() } }
     }
 
-
+    suspend fun sendOrDeleteTweetLike(tweetId: String, userId: String): Result<Unit> {
+        return try {
+            tweetRemoteDataSource.sendOrDeleteLike(tweetId, userId)
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 
 }

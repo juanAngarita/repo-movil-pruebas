@@ -1,7 +1,9 @@
 package com.example.twitterfalso.ui.Screens.userProfile
 
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,7 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.LocationOn
@@ -37,24 +38,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.example.twitterfalso.R
 import com.example.twitterfalso.data.UserProfileInfo
-import com.example.twitterfalso.ui.Screens.TweetDetail.TweetActionBar
+import com.example.twitterfalso.data.local.LocalUsersProvider
+import com.example.twitterfalso.ui.theme.TwitterFalsoTheme
 import com.example.twitterfalso.ui.utils.ProfileAsyncImage
 import com.example.twitterfalso.ui.utils.Tweet
-import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun UserProfileScreen(
     userId: String,
-    showEdit: Boolean = false,
     userProfileViewModel: UserProfileViewModel,
     onTweetProfileImageClicked: (String) -> Unit,
     onTweetEditClicked: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showEdit: Boolean = false
 ){
 
     val state by userProfileViewModel.uiState.collectAsState()
@@ -67,7 +69,6 @@ fun UserProfileScreen(
     Column(
         modifier = modifier
     ) {
-
         LazyColumn (
             modifier = modifier
         ) {
@@ -75,8 +76,8 @@ fun UserProfileScreen(
                 UserProfile(
                     userProfileInfo = state.user,
                     onFollowClicked = {
-                        userProfileViewModel.followOrUnfollow(userId)
-                        Log.d("UserProfileScreen", "El usuario ${state.currentUserId} esta tratando de seguir a ${userId}")
+                        userProfileViewModel.followOrUnfollowUser(userId)
+                        Log.d("UserProfileScreen", "El usuario ${state.currentUserId} esta tratando de seguir a $userId")
                     },
                     followed = state.user.followed
                 )
@@ -97,8 +98,6 @@ fun UserProfileScreen(
         }
 
     }
-
-
 }
 
 @Composable
@@ -109,25 +108,45 @@ fun UserProfile(
     modifier: Modifier = Modifier
 ){
 
+    val isDarkTheme = isSystemInDarkTheme()
 
+    val placeholderRes = if (isDarkTheme) {
+        R.drawable.camera_white // tu drawable para dark
+    } else {
+        R.drawable.camera_black // tu drawable para light
+    }
 
     Box(
-        modifier = modifier
+        modifier = modifier,
     ){
         Column {
-            AsyncImage(
-                contentDescription = "User Image",
+            SubcomposeAsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(userProfileInfo.backgroundImage)
                     .crossfade(true)
                     .build(),
-                error = painterResource(id = R.drawable.user_image_icon),
-                placeholder = painterResource(id = R.drawable.loading_img),
+                contentDescription = "User Image",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(125.dp),
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxWidth().height(125.dp)
+                loading = {
+                    Image(
+                        painter = painterResource(R.drawable.loading_img),
+                        contentDescription = null,
+                    )
+                },
+                error = {
+                    Image(
+                        painter = painterResource(placeholderRes),
+                        contentDescription = null,
+                    )
+                }
             )
             Column(
-                modifier = Modifier.padding(start = 16.dp, top = 8.dp).fillMaxWidth()
+                modifier = Modifier
+                    .padding(start = 16.dp, top = 8.dp)
+                    .fillMaxWidth()
             ){
                 Button(
                     onClick = onFollowClicked,
@@ -223,22 +242,21 @@ fun Follow(
 @Composable
 @Preview(showBackground = true)
 fun UserProfilePreview() {
-    val user = UserProfileInfo(
-        name = "Juan Pérez",
-        username = "@juanp",
-        profileImage = "https://randomuser.me/api/portraits/med/men/1.jpg",
-        backgroundImage = "https://randomuser.me/api/portraits/med/men/1.jpg",
-        followers = 10,
-        following = 5,
-        bio = "Desarrollador de Android",
-        location = "Ciudad de México",
-        website = "https://midu.dev",
-        birthDate = "01/01/1990",
-        accountCreationDate = "01/01/2020",
-        id = "1"
-    )
+    val user = LocalUsersProvider.users[0]
+    TwitterFalsoTheme {
+        UserProfile(userProfileInfo = user, onFollowClicked = {}, followed = false)
+    }
+}
 
-    UserProfile(userProfileInfo = user, onFollowClicked = {}, followed = false)
+@Composable
+@Preview(showBackground = true)
+fun UserProfilePreviewDark() {
+    val user = LocalUsersProvider.users[0]
+    TwitterFalsoTheme(
+        darkTheme = true
+    ) {
+        UserProfile(userProfileInfo = user, onFollowClicked = {}, followed = false)
+    }
 }
 
 @Composable

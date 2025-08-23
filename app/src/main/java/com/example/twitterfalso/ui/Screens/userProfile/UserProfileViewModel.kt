@@ -1,13 +1,10 @@
 package com.example.twitterfalso.ui.Screens.userProfile
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.twitterfalso.data.UserProfileInfo
-import com.example.twitterfalso.data.local.LocalTweetsProvider
 import com.example.twitterfalso.data.repository.TweetRepository
 import com.example.twitterfalso.data.repository.UserRepository
+import com.example.twitterfalso.ui.functions.Utils
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,9 +22,9 @@ class UserProfileViewModel @Inject constructor(
     val uiState: StateFlow<UserProfileState> = _uiState
 
     init {
-        val currentUser = FirebaseAuth.getInstance().currentUser
-        val photoUrl: String = currentUser?.photoUrl?.toString() ?: ""
-        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+
+        val photoUrl = Utils.getCurrentUserPhoto()
+        val currentUserId = Utils.getCurrentUserId()
 
         _uiState.value = _uiState.value.copy(
             user = _uiState.value.user.copy(
@@ -35,16 +32,20 @@ class UserProfileViewModel @Inject constructor(
             ),
             currentUserId = currentUserId
         )
+
     }
 
-    fun followOrUnfollow(targetUserId: String) {
-        val currentUserId = _uiState.value.currentUserId
+    fun followOrUnfollowUser(targetUserId: String){
+        val currentUserId = _uiState.value.currentUserId ?: ""
+
         viewModelScope.launch {
             val result = userRepository.followOrUnfollow(currentUserId, targetUserId)
             if (result.isSuccess) {
-                val currentUser = _uiState.value.user
                 _uiState.value = _uiState.value.copy(
-                    user = currentUser.copy(followed = !currentUser.followed)
+                    user = _uiState.value.user.copy(
+                        followers = if(_uiState.value.user.followed) _uiState.value.user.followers - 1 else _uiState.value.user.followers + 1,
+                        followed = !_uiState.value.user.followed
+                    )
                 )
             }
         }
@@ -84,6 +85,5 @@ class UserProfileViewModel @Inject constructor(
             }
         }
     }
-
 
 }

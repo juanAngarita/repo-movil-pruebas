@@ -40,7 +40,7 @@ fun TweetDto.toTweetInfo(): TweetInfo {
         retweets = retweets,
         comments = comments,
         likes = likesCount,
-        id = id.toString(),
+        id = id,
         userId = userId,
         liked = liked
     )

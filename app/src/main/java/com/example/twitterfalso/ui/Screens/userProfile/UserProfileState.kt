@@ -6,6 +6,6 @@ import com.example.twitterfalso.data.UserProfileInfo
 data class UserProfileState(
     val tweets: List<TweetInfo> = emptyList(),
     val user: UserProfileInfo = UserProfileInfo("", "", "", "", "", 0, 0, "", "", "", "", ""),
-    val userId: String? = null,
+    val userId: String = "",
     val currentUserId: String = "",
 )

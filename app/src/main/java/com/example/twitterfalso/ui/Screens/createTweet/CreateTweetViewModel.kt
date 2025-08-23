@@ -1,9 +1,7 @@
 package com.example.twitterfalso.ui.Screens.createTweet
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.twitterfalso.data.repository.AuthRepository
 import com.example.twitterfalso.data.repository.TweetRepository
 import com.example.twitterfalso.ui.functions.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel

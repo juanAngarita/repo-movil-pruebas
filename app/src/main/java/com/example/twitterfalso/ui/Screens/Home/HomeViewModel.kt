@@ -2,7 +2,6 @@ package com.example.twitterfalso.ui.Screens.Home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.twitterfalso.data.local.LocalTweetsProvider
 import com.example.twitterfalso.data.repository.TweetRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -19,12 +19,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.twitterfalso.ui.functions.Utils
+import com.example.twitterfalso.ui.theme.TwitterFalsoTheme
 
 
 data class BottomNavItem(
-    val filledeIcon: ImageVector,
+    val filledIcon: ImageVector,
     val outlineIcon: ImageVector,
     val route: String
 )
@@ -42,19 +43,18 @@ fun TwitterBottomNavigationBar(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ){
-    val navBackStackEntry = navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry.value?.destination?.route
+
+    val currentRoute = Utils.getCurrentRoute(navController)
 
     NavigationBar(
         modifier = modifier
     ) {
         bottomNavItems.forEach { item ->
-            val isSelected = currentRoute == item.route
-
+            val isSelected = (currentRoute == item.route)
             NavigationBarItem(
                 icon = {
                     Icon(
-                        imageVector = if (isSelected) item.filledeIcon else item.outlineIcon,
+                        imageVector = if (isSelected) item.filledIcon else item.outlineIcon,
                         contentDescription = item.route
                     )
                 },
@@ -62,9 +62,7 @@ fun TwitterBottomNavigationBar(
                 onClick = {
                     navController.navigate(item.route)
                 }
-
             )
-
         }
     }
 }
@@ -72,7 +70,23 @@ fun TwitterBottomNavigationBar(
 @Preview
 @Composable
 fun TwitterBottomNavigationBarPreview() {
-    TwitterBottomNavigationBar(
-        navController = rememberNavController()
-    )
+    TwitterFalsoTheme {
+        TwitterBottomNavigationBar(
+            navController = rememberNavController()
+        )
+    }
+
+}
+
+@Preview
+@Composable
+fun TwitterBottomNavigationBarPreviewDark() {
+    TwitterFalsoTheme(
+        darkTheme = true
+    ) {
+        TwitterBottomNavigationBar(
+            navController = rememberNavController()
+        )
+    }
+
 }

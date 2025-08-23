@@ -44,6 +44,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.UiMode
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -102,15 +103,22 @@ fun TwitterApp(){
             }
     }
 
+    //navigation
     val navController = rememberNavController()
-
     val currentRoute = Utils.getCurrentRoute(navController)
+
+    //user data
     val photoUrl = Utils.getCurrentUserPhoto()
     val userId = Utils.getCurrentUserId()
 
+    //Modal navigation
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
+    // 🔎 Estado de búsqueda
+    var searchQuery by remember { mutableStateOf("") }
+
+    //Modal navigation drawer
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
@@ -118,10 +126,22 @@ fun TwitterApp(){
                 imageProfile = photoUrl,
                 onProfileClicked = {
                     navController.navigate(Screen.UserProfile.createRoute(userId, true))
+                },
+                onLogoutClicked = {
+                    FirebaseAuth.getInstance().signOut()
+                    scope.launch {
+                        drawerState.close()
+                    }
+                    navController.navigate(Screen.Start.route){
+                        popUpTo(0){
+                            inclusive = true
+                        }
+                    }
                 }
             )
         }
     ) {
+        //Main scaffold
         Scaffold(
             topBar = {
                 if(NavigationLogic.shouldShowTopBar(currentRoute)) {
@@ -132,7 +152,10 @@ fun TwitterApp(){
                             drawerState.open()
                         }
                     },
-                        currentScreen = currentRoute ?: "")
+                        currentScreen = currentRoute,
+                        searchQuery = searchQuery,
+                        onSearchChange = { searchQuery = it }
+                    )
                 }
             },
             bottomBar = {
@@ -141,10 +164,10 @@ fun TwitterApp(){
                 }
             }
         ){
-
             AppNavigation(
                 navController = navController,
-                modifier = Modifier.padding(it)
+                modifier = Modifier.padding(it),
+                searchQuery = searchQuery
             )
         }
     }
@@ -154,17 +177,6 @@ fun TwitterApp(){
 
 @Composable
 fun TopAppBarTitle(title: String) {
-    Text(
-        text = title,
-        fontWeight = FontWeight.Bold,
-        fontFamily = twitterLogoFont,
-        style = MaterialTheme.typography.headlineLarge,
-        color = MaterialTheme.colorScheme.primary
-    )
-}
-
-@Composable
-fun TopAppBarSearch(title: String) {
     Text(
         text = title,
         fontWeight = FontWeight.Bold,
@@ -217,20 +229,19 @@ fun CompactSearchBar(
 fun TwitterTopAppBar(
     imageProfile: String,
     currentScreen: String,
-    profileClicked: () -> Unit
+    profileClicked: () -> Unit,
+    searchQuery: String,
+    onSearchChange: (String) -> Unit
 ){
-
-    var searchBarContent by remember { mutableStateOf("") }
-
     CenterAlignedTopAppBar(
         title = {
             if(currentScreen != Screen.Search.route) {
                 TopAppBarTitle("Twitter")
             } else{
                 CompactSearchBar(
-                    query = searchBarContent,
+                    query = searchQuery,
                     onQueryChange = {
-                        searchBarContent = it
+                        onSearchChange(it)
                     },
                     modifier = Modifier.padding(horizontal = 10.dp)
                 )
@@ -254,11 +265,15 @@ fun TwitterTopAppBar(
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    TwitterFalsoTheme {
+    TwitterFalsoTheme(
+        darkTheme = true
+    ) {
         TwitterTopAppBar(
             imageProfile = "",
             profileClicked = {},
-            currentScreen = ""
+            currentScreen = "",
+            searchQuery = "",
+            onSearchChange = {}
         )
     }
 }

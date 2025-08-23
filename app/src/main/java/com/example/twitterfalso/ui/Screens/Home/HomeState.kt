@@ -1,6 +1,5 @@
 package com.example.twitterfalso.ui.Screens.Home
 
-import androidx.core.app.NotificationCompat.MessagingStyle.Message
 import com.example.twitterfalso.data.TweetInfo
 
 data class HomeState(

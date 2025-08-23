@@ -6,6 +6,7 @@ import com.example.twitterfalso.data.UserProfileInfo
 import com.example.twitterfalso.data.datasource.impl.firestore.UserFirestoreDataSourceImpl
 import com.example.twitterfalso.data.datasource.impl.retrofit.UserRetrofitDataSourceImpl
 import com.example.twitterfalso.data.dtos.RegisterUserDto
+import com.example.twitterfalso.data.dtos.UpdateUserDto
 import com.example.twitterfalso.data.dtos.toTweetInfo
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.tasks.await
@@ -68,6 +69,26 @@ class UserRepository @Inject constructor(
             Result.failure(e)
         }
 
+    }
+
+    suspend fun updateUserProfile(userId: String, updateUserDto: UpdateUserDto): Result<Unit>{
+        return try{
+            userRemoteDataSource.updateUserProfile(userId, updateUserDto)
+            return Result.success(Unit)
+        } catch (e: Exception) {
+            Log.d("updateUserProfileImage", "getUserById: ${e.message}")
+            Result.failure(e)
+        }
+    }
+
+    suspend fun updateUserBackgroundImage(userId: String, photoUrl: String): Result<Unit>{
+        return try{
+            userRemoteDataSource.updateUserBackgroundImage(userId, photoUrl)
+            Result.success(Unit)
+            } catch (e: Exception) {
+            Log.d("updateUserProfileImage", "getUserById: ${e.message}")
+            Result.failure(e)
+        }
     }
 
 }
