@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.twitterfalso.data.repository.AuthRepository
 import com.example.twitterfalso.data.repository.StorageRepository
 import com.example.twitterfalso.data.repository.UserRepository
-import com.example.twitterfalso.ui.functions.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,8 +22,8 @@ class ProfileViewModel @Inject constructor(
 
     private val _state = MutableStateFlow(
         ProfileState(
-        email = Utils.getCurrentUserEmail(),
-        profileImageUrl = Utils.getCurrentUserPhoto()
+        email = authRepository.currentUser?.email ?: "",
+        profileImageUrl = authRepository.currentUser?.photoUrl?.toString() ?: ""
     )
     )
     val state: StateFlow<ProfileState> = _state
@@ -41,7 +40,7 @@ class ProfileViewModel @Inject constructor(
 
                 val photoURL = result.getOrNull()
                 if(photoURL != null){
-                    val userId = Utils.getCurrentUserId()
+                    val userId = authRepository.currentUser?.uid ?: return@launch
                     userRepository.updateUserProfileImage(userId = userId, photoUrl = photoURL)
                 }
 

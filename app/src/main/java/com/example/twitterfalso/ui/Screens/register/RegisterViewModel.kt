@@ -1,10 +1,17 @@
 package com.example.twitterfalso.ui.Screens.register
 
+import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.twitterfalso.data.repository.AuthRepository
 import com.example.twitterfalso.data.repository.UserRepository
-import com.example.twitterfalso.ui.functions.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -93,7 +100,7 @@ class RegisterViewModel @Inject constructor(
 
             if (result.isSuccess) {
 
-                val userId = Utils.getCurrentUserId()
+                val userId = authRepository.currentUser?.uid ?: throw Exception("No se pudo obtener el usuario actual")
 
                 userRepository.registerUser(
                     username = state.userName,

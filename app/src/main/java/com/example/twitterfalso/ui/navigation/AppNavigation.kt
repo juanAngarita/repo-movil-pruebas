@@ -1,22 +1,42 @@
 package com.example.twitterfalso.ui.navigation
 
 import ProfileScreen
+import android.util.Log
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.twitterfalso.ui.Screens.Home.HomeScreen
 import com.example.twitterfalso.ui.Screens.Home.HomeViewModel
 import com.example.twitterfalso.ui.Screens.Splash.SplashScreen
+import com.example.twitterfalso.ui.Screens.register.RegisterScreen
 import com.example.twitterfalso.ui.Screens.StartScreen
 import com.example.twitterfalso.ui.Screens.TweetDetail.TweetDetailScreen
 import com.example.twitterfalso.ui.Screens.TweetDetail.TweetDetailViewModel
@@ -25,10 +45,7 @@ import com.example.twitterfalso.ui.Screens.createTweet.CreateTweetViewModel
 import com.example.twitterfalso.ui.Screens.login.LoginScreen
 import com.example.twitterfalso.ui.Screens.login.LoginViewModel
 import com.example.twitterfalso.ui.Screens.profile.ProfileViewModel
-import com.example.twitterfalso.ui.Screens.register.RegisterScreen
 import com.example.twitterfalso.ui.Screens.register.RegisterViewModel
-import com.example.twitterfalso.ui.Screens.updateProfile.UpdateProfileScreen
-import com.example.twitterfalso.ui.Screens.updateProfile.UpdateProfileViewModel
 import com.example.twitterfalso.ui.Screens.userProfile.UserProfileScreen
 
 //Sealed class
@@ -55,11 +72,8 @@ sealed class Screen(val route: String) {
     }
 }
 
-
-
 @Composable
 fun AppNavigation(
-    searchQuery: String,
     navController: NavHostController,
     modifier: Modifier = Modifier
 ){
@@ -68,6 +82,7 @@ fun AppNavigation(
         startDestination = Screen.Splash.route,
         modifier = modifier
     ){
+
         composable(route = Screen.Splash.route){
             SplashScreen(
                 navigateToHome = {
@@ -124,7 +139,7 @@ fun AppNavigation(
         composable(route = Screen.Home.route)  {
             val homeViewModel: HomeViewModel = hiltViewModel()
             HomeScreen(
-                homeViewModel = hiltViewModel(),
+                homeViewModel = homeViewModel,
                 onTweetClicked = { tweetId ->
                     navController.navigate(Screen.TweetDetail.createRoute(tweetId))
                 },
@@ -142,12 +157,11 @@ fun AppNavigation(
 
 
         composable(route = Screen.Notifications.route)  {
-            val updateProfileViewModel: UpdateProfileViewModel = hiltViewModel()
-            UpdateProfileScreen(updateProfileViewModel = updateProfileViewModel)
+            Text("Falta esta pantalla")
         }
 
         composable(route = Screen.Search.route)  {
-            Text(searchQuery)
+            Text("Falta esta pantalla")
         }
 
         composable(route = Screen.Settings.route)  {
@@ -189,6 +203,9 @@ fun AppNavigation(
             //Obtener los paramatros
             val tweetId = it.arguments?.getString("tweetId") ?: ""
 
+            // Buscar el tweet
+            //val tweet = LocalTweetsProvider.tweets.find { it.id == tweetId }
+
             val tweetDetailViewModel: TweetDetailViewModel = hiltViewModel()
 
             //if(tweet != null){
@@ -201,11 +218,11 @@ fun AppNavigation(
                     },
                     onTweetProfileImageClicked = { userId ->
                         navController.navigate(Screen.UserProfile.createRoute(userId, showEdit = false))
-                    },
-                    onTweetDetailClicked = { tweetId ->
-                        navController.navigate(Screen.TweetDetail.createRoute(tweetId))
                     }
                 )
+            //} else {
+            //    Text(text = "Tweet no encontrado")
+            //}
         }
 
         composable(

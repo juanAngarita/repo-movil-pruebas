@@ -3,9 +3,11 @@ package com.example.twitterfalso.ui.Screens.TweetDetail
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.twitterfalso.data.TweetInfo
+import com.example.twitterfalso.data.local.LocalTweetsProvider
 import com.example.twitterfalso.data.repository.AuthRepository
 import com.example.twitterfalso.data.repository.TweetRepository
-import com.example.twitterfalso.ui.functions.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,39 +17,24 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TweetDetailViewModel @Inject constructor(
-    private val tweetRepository: TweetRepository
+    private val tweetRepository: TweetRepository,
+    private val authRepository: AuthRepository
 ): ViewModel() {
 
     private val _uiState = MutableStateFlow(TweetDetailState())
     val uiState: StateFlow<TweetDetailState> = _uiState
 
     init {
-        val currentUserID = Utils.getCurrentUserId()
+        val currentUserID = authRepository.currentUser?.uid ?: throw Exception("No user id")
+
         _uiState.value = _uiState.value.copy(
             currentUserId = currentUserID
         )
     }
 
-    fun sendOrDeleteTweetLike(tweetId: String, userId: String) {
-        viewModelScope.launch {
-            val result = tweetRepository.sendOrDeleteTweetLike(tweetId, userId)
-            if (result.isSuccess) {
-                _uiState.update {
-                    it.copy(
-                        tweet = it.tweet?.copy(
-                            liked = !it.tweet.liked,
-                            likes = if(it.tweet.liked) it.tweet.likes - 1 else it.tweet.likes + 1)
-                    )
-                }
-            } else {
-
-            }
-        }
-    }
-
     fun getTweetById(id: String) {
         viewModelScope.launch {
-            val result = tweetRepository.getTweetById(id, uiState.value.currentUserId)
+            val result = tweetRepository.getTweetById(id)
             if (result.isSuccess) {
                 val tweet = result.getOrNull()
                 if (tweet != null) {
@@ -69,6 +56,24 @@ class TweetDetailViewModel @Inject constructor(
                 }
             } else {
                 //
+            }
+        }
+    }
+
+    fun sendOrDeleteTweetLike(tweetId: String, userId: String) {
+        viewModelScope.launch {
+            val result = tweetRepository.sendOrDeleteTweetLike(tweetId, userId)
+            if (result.isSuccess) {
+                _uiState.update {
+                    it.copy(
+                        tweet = it.tweet?.copy(
+                            liked = !it.tweet.liked,
+                            likes = if(it.tweet.liked) it.tweet.likes - 1 else it.tweet.likes + 1)
+                    )
+                }
+
+            } else {
+
             }
         }
     }

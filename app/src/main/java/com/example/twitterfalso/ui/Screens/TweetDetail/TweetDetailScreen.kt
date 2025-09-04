@@ -1,7 +1,6 @@
 package com.example.twitterfalso.ui.Screens.TweetDetail
 
 import android.util.Log
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.twitterfalso.data.TweetInfo
 import com.example.twitterfalso.data.local.LocalTweetsProvider
 import com.example.twitterfalso.ui.utils.Tweet
 
@@ -36,7 +36,6 @@ fun TweetDetailScreen(
     tweetDetailViewModel: TweetDetailViewModel,
     onTweetProfileImageClicked: (String) -> Unit,
     onTweetReplyClicked: (String) -> Unit,
-    onTweetDetailClicked: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -56,15 +55,16 @@ fun TweetDetailScreen(
             item{
                 Tweet(
                     tweetInfo = state.tweet!!,
-                    onTweetReplyClicked = {onTweetReplyClicked(tweetId)},
-                    onTweetProfileImageClicked = onTweetProfileImageClicked,
+                    onTweetReplyClicked = onTweetReplyClicked,
+                    onTweetProfileImageClicked = onTweetProfileImageClicked
                 )
                 HorizontalDivider(thickness = 1.dp)
                 TweetActionBar(
                     onReply = { /*TODO*/ },
                     onRetweet = { /*TODO*/ },
                     onLike = {
-                        tweetDetailViewModel.sendOrDeleteTweetLike(tweetId, state.currentUserId)
+                        tweetDetailViewModel.sendOrDeleteTweetLike(tweetId, state.currentUserId ?: "")
+                        Log.d("TweetDetailScreen", "el usuario ${state.currentUserId} dio like al tweet ${tweetId}")
                     },
                     onSave = { /*TODO*/ },
                     onShare = { /*TODO*/ },
@@ -80,9 +80,7 @@ fun TweetDetailScreen(
             items(state.resposeTweets.size) { index ->
                 Tweet(
                     tweetInfo = state.resposeTweets[index],
-                    modifier = Modifier.padding(top = 6.dp, bottom = 6.dp).clickable(onClick = {
-                        onTweetDetailClicked(state.resposeTweets[index].id)
-                    }),
+                    modifier = Modifier.padding(top = 6.dp, bottom = 6.dp),
                     onTweetReplyClicked = onTweetReplyClicked,
                     onTweetProfileImageClicked = onTweetProfileImageClicked
                 )
@@ -106,8 +104,7 @@ fun TweetDetailScreenPreview() {
         tweetId = tweet.id,
         tweetDetailViewModel = viewModel(),
         onTweetReplyClicked = {},
-        onTweetProfileImageClicked = {},
-        onTweetDetailClicked = {}
+        onTweetProfileImageClicked = {}
     )
 }
 
@@ -159,6 +156,6 @@ fun TweetActionBarPreview() {
         onLike = {},
         onSave = {},
         onShare = {},
-        isLiked = true
+        isLiked = false
     )
 }

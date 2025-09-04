@@ -3,22 +3,27 @@ package com.example.twitterfalso.data.repository
 import android.util.Log
 import com.example.twitterfalso.data.TweetInfo
 import com.example.twitterfalso.data.UserProfileInfo
+import com.example.twitterfalso.data.datasource.AuthRemoteDataSource
 import com.example.twitterfalso.data.datasource.impl.firestore.UserFirestoreDataSourceImpl
 import com.example.twitterfalso.data.datasource.impl.retrofit.UserRetrofitDataSourceImpl
 import com.example.twitterfalso.data.dtos.RegisterUserDto
-import com.example.twitterfalso.data.dtos.UpdateUserDto
 import com.example.twitterfalso.data.dtos.toTweetInfo
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class UserRepository @Inject constructor(
-    private val userRemoteDataSource: UserFirestoreDataSourceImpl
+    private val userRemoteDataSource: UserFirestoreDataSourceImpl,
+    private val authRemoteDataSource: AuthRemoteDataSource
 ) {
 
     suspend fun getUserById(id: String): Result<UserProfileInfo> {
+
+        val currentUserId = authRemoteDataSource.currentUser?.uid ?: ""
+
         return try {
-            val user = userRemoteDataSource.getUserById(id)
+            val user = userRemoteDataSource.getUserById(id, currentUserId)
+            if(user == null) return Result.failure(Exception("User not found"))
             val userProfileIngo = user.toUserProfileInfo()
             Result.success(userProfileIngo)
         } catch (e: Exception) {
@@ -60,33 +65,12 @@ class UserRepository @Inject constructor(
         }
     }
 
-    suspend fun followOrUnfollow(currentUserId: String, targetUserId: String): Result<Unit>{
+    suspend fun followOrUnfollowUser(currentUserId: String, targetUserId: String): Result<Unit>{
         return try{
-            userRemoteDataSource.followOrUnfollow(currentUserId, targetUserId)
-            return Result.success(Unit)
-        } catch (e: Exception) {
-            Log.d("updateUserProfileImage", "getUserById: ${e.message}")
-            Result.failure(e)
-        }
-
-    }
-
-    suspend fun updateUserProfile(userId: String, updateUserDto: UpdateUserDto): Result<Unit>{
-        return try{
-            userRemoteDataSource.updateUserProfile(userId, updateUserDto)
-            return Result.success(Unit)
-        } catch (e: Exception) {
-            Log.d("updateUserProfileImage", "getUserById: ${e.message}")
-            Result.failure(e)
-        }
-    }
-
-    suspend fun updateUserBackgroundImage(userId: String, photoUrl: String): Result<Unit>{
-        return try{
-            userRemoteDataSource.updateUserBackgroundImage(userId, photoUrl)
+            userRemoteDataSource.followOrUnfollowUser(currentUserId, targetUserId)
             Result.success(Unit)
-            } catch (e: Exception) {
-            Log.d("updateUserProfileImage", "getUserById: ${e.message}")
+        } catch (e: Exception) {
+            Log.d("followOrUnfollowUser", "getUserById: ${e.message}")
             Result.failure(e)
         }
     }

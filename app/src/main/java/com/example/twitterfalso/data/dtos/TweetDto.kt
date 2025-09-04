@@ -23,8 +23,7 @@ data class TweetDto(
     val createdAt: String, // en formato ISO // "2025-08-05T22:20:16.658Z"
     val updatedAt: String,
     val user: UserDto,
-    //nuevo
-    var liked: Boolean = false
+    var liked: Boolean = false,
 ){
     constructor(): this("", "", "", "", 0, 0, 0, null, "", "", UserDto("", "", "", ""))
 }
@@ -40,7 +39,7 @@ fun TweetDto.toTweetInfo(): TweetInfo {
         retweets = retweets,
         comments = comments,
         likes = likesCount,
-        id = id,
+        id = id.toString(),
         userId = userId,
         liked = liked
     )

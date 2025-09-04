@@ -13,9 +13,9 @@ interface TweetRemoteDataSource {
     suspend fun updateTweet(id: String, tweet: CreateTweetDto): Unit
     suspend fun getTweetReplies(id: String): List<TweetDto>
 
-    //nuevos
-    suspend fun sendOrDeleteLike(tweetId: String, userId: String): Unit
-    //listenAllTweets
-    fun listenAllTweets(): Flow<List<TweetDto>>
+    suspend fun sendOrDeleteTweetLike(tweetId: String, userId: String): Unit
+
+    suspend fun listenAllTweets(): Flow<List<TweetDto>>
+
 
 }

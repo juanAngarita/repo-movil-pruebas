@@ -15,8 +15,6 @@ data class TweetInfo(
     val likes: Int,
     val comments: Int,
     val userId: String,
-    //
+    //nuevo
     val liked: Boolean = false,
-){
-    constructor() : this ("","","","","","",0,0,0,"",false)
-}
+)

@@ -2,6 +2,7 @@ package com.example.twitterfalso.ui.Screens.Home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.twitterfalso.data.local.LocalTweetsProvider
 import com.example.twitterfalso.data.repository.TweetRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,15 +25,24 @@ class HomeViewModel @Inject constructor(
     }
 
     fun getAllTweets() {
+        /*viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+            val result = tweetRepository.getTweets()
+            if (result.isSuccess) {
+                _uiState.update { it.copy(tweets = result.getOrNull() ?: emptyList(), isLoading = false, errorMessage = null) }
+            } else {
+                _uiState.update { it.copy(errorMessage = result.exceptionOrNull()?.message, isLoading = false) }
+            }
+        }*/
+
+
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             tweetRepository.getTweetsLive()
-                .catch { e ->
-                    _uiState.update { it.copy(errorMessage = e.message, isLoading = false) }
-                }
+                .catch { e -> _uiState.update { it.copy(errorMessage = e.message, isLoading = false) } }
                 .collect { tweets ->
                     _uiState.update { it.copy(tweets = tweets, isLoading = false, errorMessage = null) }
-                }
+            }
         }
     }
 

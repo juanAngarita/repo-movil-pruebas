@@ -35,11 +35,11 @@ class TweetRetrofitDataSourceImpl @Inject constructor(
         return service.getTweetReplies(id)
     }
 
-    override suspend fun sendOrDeleteLike(tweetId: String, userId: String) {
+    override suspend fun sendOrDeleteTweetLike(tweetId: String, userId: String) {
         TODO("Not yet implemented")
     }
 
-    override fun listenAllTweets(): Flow<List<TweetDto>> {
+    override suspend fun listenAllTweets(): Flow<List<TweetDto>> {
         TODO("Not yet implemented")
     }
 

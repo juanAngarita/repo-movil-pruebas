@@ -4,17 +4,13 @@ import com.example.twitterfalso.data.datasource.UserRemoteDataSource
 import com.example.twitterfalso.data.datasource.services.UserRetrofitService
 import com.example.twitterfalso.data.dtos.RegisterUserDto
 import com.example.twitterfalso.data.dtos.TweetDto
-import com.example.twitterfalso.data.dtos.UpdateUserDto
 import com.example.twitterfalso.data.dtos.UserDtoGeneric
 import com.example.twitterfalso.data.dtos.UserProfileRetrofitDto
 import javax.inject.Inject
 
 class UserRetrofitDataSourceImpl @Inject constructor(private val service: UserRetrofitService) : UserRemoteDataSource {
 
-    override suspend fun getUserById(
-        id: String,
-        currentUserId: String
-    ): UserDtoGeneric {
+    override suspend fun getUserById(id: String, currentUserId: String): UserProfileRetrofitDto {
         return service.getUserById("1")
     }
 
@@ -30,18 +26,7 @@ class UserRetrofitDataSourceImpl @Inject constructor(private val service: UserRe
         TODO("Not yet implemented")
     }
 
-    override suspend fun followOrUnfollow(currentUserId: String, targetUserId: String) {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun updateUserProfile(
-        userId: String,
-        userProfileInfo: UpdateUserDto
-    ) {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun updateUserBackgroundImage(userId: String, photoUrl: String) {
+    override suspend fun followOrUnfollowUser(currentUserId: String, targetUserId: String) {
         TODO("Not yet implemented")
     }
 

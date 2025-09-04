@@ -10,7 +10,6 @@ import com.example.twitterfalso.data.datasource.impl.retrofit.TweetRetrofitDataS
 import com.example.twitterfalso.data.dtos.CreateTweetDto
 import com.example.twitterfalso.data.dtos.CreateTweetUserDto
 import com.example.twitterfalso.data.dtos.toTweetInfo
-import com.example.twitterfalso.ui.functions.Utils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -39,7 +38,10 @@ class TweetRepository @Inject constructor(
         return try {
 
             val user = userRemoteDataSource.getUserById(userId)
-            val photoUrl = Utils.getCurrentUserPhoto()
+
+            if(user == null) return Result.failure(Exception("User not found"))
+
+            val photoUrl = authRemoteDataSource.currentUser?.photoUrl?.toString()
 
             val createTweetUserDto = CreateTweetUserDto(
                 name = user.name,
@@ -58,7 +60,10 @@ class TweetRepository @Inject constructor(
         }
     }
 
-    suspend fun getTweetById(id: String, currentUserId: String = ""): Result<TweetInfo> {
+    suspend fun getTweetById(id: String): Result<TweetInfo> {
+
+        val currentUserId = authRemoteDataSource.currentUser?.uid ?: ""
+
         return try {
             val tweet = tweetRemoteDataSource.getTweetById(id, currentUserId)
             val tweetInfo = tweet.toTweetInfo()
@@ -92,27 +97,20 @@ class TweetRepository @Inject constructor(
         }
     }
 
-    suspend fun getUserTweets(userId: String, tweetId: String): Result<Unit> {
-        return try {
-            tweetRemoteDataSource.sendOrDeleteLike(tweetId, userId);
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    fun getTweetsLive(): Flow<List<TweetInfo>> {
-        return tweetRemoteDataSource.listenAllTweets()
-            .map { list -> list.map { it.toTweetInfo() } }
-    }
-
     suspend fun sendOrDeleteTweetLike(tweetId: String, userId: String): Result<Unit> {
         return try {
-            tweetRemoteDataSource.sendOrDeleteLike(tweetId, userId)
+            tweetRemoteDataSource.sendOrDeleteTweetLike(tweetId, userId)
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
+
+    suspend fun getTweetsLive(): Flow<List<TweetInfo>> {
+        return tweetRemoteDataSource.listenAllTweets().map { tweets ->
+            tweets.map { it.toTweetInfo() }
+        }
+    }
+
 
 }
