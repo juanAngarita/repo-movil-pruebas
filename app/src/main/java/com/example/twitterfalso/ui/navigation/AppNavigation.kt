@@ -16,6 +16,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.twitterfalso.ui.Screens.Home.HomeScreen
 import com.example.twitterfalso.ui.Screens.Home.HomeViewModel
+import com.example.twitterfalso.ui.Screens.SearchUser.SearchUserScreen
+import com.example.twitterfalso.ui.Screens.SearchUser.SearchUserViewModel
 import com.example.twitterfalso.ui.Screens.Splash.SplashScreen
 import com.example.twitterfalso.ui.Screens.StartScreen
 import com.example.twitterfalso.ui.Screens.TweetDetail.TweetDetailScreen
@@ -142,12 +144,15 @@ fun AppNavigation(
 
 
         composable(route = Screen.Notifications.route)  {
-            val updateProfileViewModel: UpdateProfileViewModel = hiltViewModel()
-            UpdateProfileScreen(updateProfileViewModel = updateProfileViewModel)
+            Text("Falta esta pantalla")
         }
 
         composable(route = Screen.Search.route)  {
-            Text(searchQuery)
+            val searchUserViewModel: SearchUserViewModel = hiltViewModel()
+            SearchUserScreen(
+                viewModel = searchUserViewModel,
+                searchQuery = searchQuery
+            )
         }
 
         composable(route = Screen.Settings.route)  {
@@ -155,7 +160,7 @@ fun AppNavigation(
         }
 
         composable(route = Screen.Profile.route)  {
-            val profileViewModel: ProfileViewModel = hiltViewModel()
+            /*val profileViewModel: ProfileViewModel = hiltViewModel()
             ProfileScreen(
                 viewModel = profileViewModel,
                 logoutButtonPressed = {
@@ -163,7 +168,9 @@ fun AppNavigation(
                         popUpTo(0) { inclusive = true }
                     }
                 }
-            )
+            )*/
+            val updateProfileViewModel: UpdateProfileViewModel = hiltViewModel()
+            UpdateProfileScreen(updateProfileViewModel = updateProfileViewModel)
         }
 
         composable(

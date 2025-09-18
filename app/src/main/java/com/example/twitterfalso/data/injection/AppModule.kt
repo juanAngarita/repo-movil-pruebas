@@ -1,7 +1,10 @@
 package com.example.twitterfalso.data.injection
 
+import com.example.twitterfalso.data.datasource.UserRemoteDataSource
+import com.example.twitterfalso.data.datasource.impl.firestore.UserFirestoreDataSourceImpl
 import com.example.twitterfalso.data.datasource.services.TweetRetrofitService
 import com.example.twitterfalso.data.datasource.services.UserRetrofitService
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -36,7 +39,5 @@ object AppModule {
     fun providesUserRetrofitService(retrofit: Retrofit): UserRetrofitService {
         return retrofit.create(UserRetrofitService::class.java)
     }
-
-
 
 }

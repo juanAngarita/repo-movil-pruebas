@@ -45,4 +45,8 @@ class UserRetrofitDataSourceImpl @Inject constructor(private val service: UserRe
         TODO("Not yet implemented")
     }
 
+    override suspend fun searchUsers(query: String): List<UserDtoGeneric> {
+        TODO("Not yet implemented")
+    }
+
 }

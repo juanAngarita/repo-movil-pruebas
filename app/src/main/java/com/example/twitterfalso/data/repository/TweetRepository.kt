@@ -39,6 +39,7 @@ class TweetRepository @Inject constructor(
         return try {
 
             val user = userRemoteDataSource.getUserById(userId)
+            if(user == null) return Result.failure(NoSuchElementException("Usuario $userId no encontrado"))
             val photoUrl = Utils.getCurrentUserPhoto()
 
             val createTweetUserDto = CreateTweetUserDto(
@@ -47,9 +48,7 @@ class TweetRepository @Inject constructor(
                 profileImage = photoUrl
             )
 
-
             val createTweetDto = CreateTweetDto(content, userId, parentTweetId, tweetId, createTweetUserDto)
-            Log.d("TAG", "createTweet: $tweetId")
             if(tweetId != null) tweetRemoteDataSource.updateTweet(tweetId, createTweetDto)
              else tweetRemoteDataSource.createTweet(createTweetDto)
             Result.success(Unit)
@@ -84,10 +83,8 @@ class TweetRepository @Inject constructor(
     suspend fun deleteTweet(id: String): Result<Unit?> {
         return try {
             tweetRemoteDataSource.deleteTweet(id)
-            Log.d("TAG", "BIEN")
             Result.success(Unit)
         } catch (e: Exception) {
-            Log.d("TAG", "deleteTweet: $e")
             Result.failure(e)
         }
     }

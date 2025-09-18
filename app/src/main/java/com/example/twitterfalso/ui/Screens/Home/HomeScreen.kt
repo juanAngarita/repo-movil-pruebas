@@ -35,6 +35,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.twitterfalso.ui.utils.Tweet
 
@@ -45,7 +46,7 @@ fun HomeScreen(
     onTweetProfileImageClicked: (String) -> Unit,
     onTweetClicked: (String) -> Unit,
     onTweetReplyClicked: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier.testTag("homeScreen")
 ){
 
     val state by homeViewModel.uiState.collectAsState()

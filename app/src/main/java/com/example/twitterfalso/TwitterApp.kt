@@ -80,7 +80,7 @@ fun TwitterApp(){
         }
     )
     // Al entrar al Composable, pedimos el permiso si hace falta
-    LaunchedEffect(Unit) {
+    /*LaunchedEffect(Unit) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(
@@ -101,7 +101,7 @@ fun TwitterApp(){
                     Log.e("FCM", "Error obteniendo token", task.exception)
                 }
             }
-    }
+    }*/
 
     //navigation
     val navController = rememberNavController()

@@ -8,7 +8,7 @@ import com.example.twitterfalso.data.dtos.UserDtoGeneric
 
 interface UserRemoteDataSource {
 
-    suspend fun getUserById(id: String, currentUserId: String = ""): UserDtoGeneric
+    suspend fun getUserById(id: String, currentUserId: String = ""): UserDtoGeneric?
     suspend fun getUserTweets(id: String): List<TweetDto>
     suspend fun registerUser(registerUserDto: RegisterUserDto, userId: String): Unit
     suspend fun updateUserProfileImage(userId: String, photoUrl: String): Unit
@@ -18,4 +18,6 @@ interface UserRemoteDataSource {
     suspend fun updateUserProfile(userId: String, userProfileInfo: UpdateUserDto): Unit
 
     suspend fun updateUserBackgroundImage(userId: String, photoUrl: String): Unit
+
+    suspend fun searchUsers(query: String): List<UserDtoGeneric>
 }

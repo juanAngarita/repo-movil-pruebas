@@ -7,15 +7,15 @@ abstract class UserDtoGeneric{
 
 
 data class UserProfileFirestoreDto(
-    val id: Int,
+    val id: String,
     val username: String,
     val email: String,
     val name: String,
     val bio: String?,
     val pais: String?,
-    val website: String,
-    val profileImage: String,
-    val coverImage: String,
+    val website: String?,
+    val profileImage: String?,
+    val coverImage: String?,
     val birthDate: String, // o LocalDate si lo vas a deserializar como fecha
     val verified: Boolean,
     val followersCount: Int,
@@ -24,16 +24,16 @@ data class UserProfileFirestoreDto(
     val updatedAt: String,  // igual que createdAt
     var followed: Boolean = false
 ) : UserDtoGeneric(){
-    constructor(): this(0, "", "", "", "", "", "", "", "", "", false, 0, 0, "", "")
+    constructor(): this("", "", "", "", "", "", "", null, "", "", false, 0, 0, "", "")
 
     override fun toUserProfileInfo(): UserProfileInfo {
         return UserProfileInfo(
-            id = id.toString(),
+            id = id,
             username = username,
             name = name,
             bio = bio ?: "No hay biografia",
             location = pais ?: "No hay ubicación",
-            website = website,
+            website = website ?: "",
             profileImage = profileImage,
             birthDate = birthDate,
             followers = followersCount,

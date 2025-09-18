@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -80,13 +81,13 @@ fun BodyHomeScreen(
         )
         AppButton(
             stringResource(R.string.iniciar_sesion),
-            modifier = Modifier.padding(bottom = 4.dp),
+            modifier = Modifier.padding(bottom = 4.dp).testTag("btnLogin"),
             onClick = loginButtonPressed
 
         )
         AppButton(
             stringResource(R.string.crear_cuenta),
-            modifier = Modifier.padding(bottom = 16.dp),
+            modifier = Modifier.padding(bottom = 16.dp).testTag("btnRegister"),
             onClick = registerButtonPressed
 
         )

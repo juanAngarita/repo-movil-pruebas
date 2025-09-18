@@ -1,9 +1,14 @@
 package com.example.twitterfalso.data.repository
 
+import android.util.Log
 import com.example.twitterfalso.data.datasource.AuthRemoteDataSource
+import com.example.twitterfalso.ui.Screens.register.RegisterFormState
+import com.example.twitterfalso.ui.functions.Utils
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseUser
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 //Repositorio: Autenticacion
@@ -22,7 +27,8 @@ import javax.inject.Inject
 * Proceso: Retorna un Result con un objeto de UI
 * */
 class AuthRepository @Inject constructor(
-    private val authRemoteDataSource: AuthRemoteDataSource
+    private val authRemoteDataSource: AuthRemoteDataSource,
+    private val userRepository: UserRepository
 ) {
 
     suspend fun signIn(email: String, password: String): Result<Unit> {
@@ -41,6 +47,7 @@ class AuthRepository @Inject constructor(
 
     }
 
+
     suspend fun signUp(email: String, password: String): Result<Unit> {
         try {
             authRemoteDataSource.signUp(email, password)
@@ -49,8 +56,9 @@ class AuthRepository @Inject constructor(
         catch (e: Exception) {
             return Result.failure(e)
         }
-
     }
+
+
 
     fun signOut() {
         authRemoteDataSource.signOut()

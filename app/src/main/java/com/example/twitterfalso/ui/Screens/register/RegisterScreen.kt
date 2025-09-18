@@ -14,6 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -31,7 +32,7 @@ import java.time.LocalDate
 @Composable
 fun RegisterScreen(
     registerViewModel: RegisterViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier.testTag("registerScreen")
 ){
 
     val state by registerViewModel.uistate.collectAsState()
@@ -71,10 +72,11 @@ fun RegisterScreen(
             //1. Si la contraseña es menor a 6 dígitos
             //2. Si el correo es admin@admin.com aparece correo ya registrado
             if(state.mostrarMensaje)
-                Text(state.errorMessage)
+                Text(state.errorMessage, modifier = Modifier.testTag("errorMessage"))
             AppButton(
                 "Registrar",
                 onClick = {registerViewModel.registerButtonPressed()},
+                modifier = Modifier.testTag("btnRegister")
             )
         }
     }
@@ -120,7 +122,7 @@ fun FormularioRegistro(
             value = email,
             onValueChange = onEmailChange,
             label = { Text(text = stringResource(R.string.email)) },
-            modifier = Modifier.padding(top = 8.dp)
+            modifier = Modifier.padding(top = 8.dp).testTag("emailField")
         )
         OutlinedTextField(
             value = name,
@@ -128,27 +130,27 @@ fun FormularioRegistro(
             label = {
                 Text(text = "Nombre")
             },
-            modifier = Modifier.padding(top = 8.dp)
+            modifier = Modifier.padding(top = 8.dp).testTag("nameField")
         )
         OutlinedTextField(
             value = userName,
             onValueChange = onUserNameChange,
             label = { Text(text = "Nombre de usuario") },
-            modifier = Modifier.padding(top = 8.dp)
+            modifier = Modifier.padding(top = 8.dp).testTag("userNameField")
         )
 
         OutlinedTextField(
             value = pais ?: "",
             onValueChange = onPaisChange,
             label = { Text(text = "País") },
-            modifier = Modifier.padding(top = 8.dp)
+            modifier = Modifier.padding(top = 8.dp).testTag("paisField")
         )
 
         OutlinedTextField(
             value = bio ?: "",
             onValueChange = onBioChange,
             label = { Text(text = "Biografía") },
-            modifier = Modifier.padding(top = 8.dp)
+            modifier = Modifier.padding(top = 8.dp).testTag("bioField")
         )
 
 
@@ -165,7 +167,7 @@ fun FormularioRegistro(
                     )
                 }
             },
-            modifier = Modifier.padding(vertical = 8.dp)
+            modifier = Modifier.padding(vertical = 8.dp).testTag("passwordField")
         )
     }
 

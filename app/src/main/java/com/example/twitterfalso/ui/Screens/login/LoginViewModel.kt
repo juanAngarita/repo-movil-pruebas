@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.twitterfalso.data.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -37,13 +38,12 @@ class LoginViewModel @Inject constructor(
 
     fun registerButtonPressed(){
         if(
-            _uiState.value.email.isNullOrEmpty() ||
-            _uiState.value.password.isNullOrEmpty()
+            _uiState.value.email.isEmpty() ||
+            _uiState.value.password.isEmpty()
         ){
             _uiState.update { it.copy(mostrarMensaje = true, errorMessage = "Todos los campos son obligatorios") }
         } else {
             viewModelScope.launch {
-
                     val result = authRepository.signIn(
                         _uiState.value.email,
                         _uiState.value.password

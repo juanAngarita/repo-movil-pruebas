@@ -14,6 +14,7 @@ data class RegisterFormState(
     val mostrarPassword: Boolean = false,
     val navigate: Boolean = false,
     val errorMessage: String = "",
-    val mostrarMensaje: Boolean = false
+    val mostrarMensaje: Boolean = false,
+    val loading: Boolean = false
 )
 

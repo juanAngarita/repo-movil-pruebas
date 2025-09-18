@@ -74,9 +74,9 @@ class UserProfileViewModel @Inject constructor(
         }
     }
 
-     fun getUserProfile(userId: String){
+     fun  getUserProfile(userId: String){
         viewModelScope.launch {
-            val result = userRepository.getUserById(userId)
+            val result = userRepository.getUserById(userId, Utils.getCurrentUserId())
             if (result.isSuccess) {
                 val userProfileInfo = result.getOrNull()!!
                     _uiState.value = _uiState.value.copy(
